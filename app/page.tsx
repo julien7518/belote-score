@@ -32,7 +32,7 @@ function Button({iconUrl, label, buttonFunction, smallSize=false} : SeclectButto
 			alt = {label}
 			height = "0"
 			width = "0"
-			className = "h-5 w-4"
+			className="h-5 w-auto"
 		/>
 		) : null;
 
@@ -147,10 +147,10 @@ export default function App(){
 		{/*Couleur*/}
 		<div className="flex justify-around">
 			<div className="inline-grid grid-cols-4">
-				<Button iconUrl="/trefle.png" label="Trèfle" buttonFunction={() => selectColor(0)} />
-				<Button iconUrl="/carreau.png" label="Carreau" buttonFunction={() => selectColor(1)} />
-				<Button iconUrl="/coeur.png" label="Coeur" buttonFunction={() => selectColor(2)} />
-				<Button iconUrl="/pique.png" label="Pique" buttonFunction={() => selectColor(3)} />
+				<Button iconUrl="/trefle.svg" label="Trèfle" buttonFunction={() => selectColor(0)} />
+				<Button iconUrl="/carreau.svg" label="Carreau" buttonFunction={() => selectColor(1)} />
+				<Button iconUrl="/coeur.svg" label="Coeur" buttonFunction={() => selectColor(2)} />
+				<Button iconUrl="/pique.svg" label="Pique" buttonFunction={() => selectColor(3)} />
 				<Button label="Sans Atout" buttonFunction={() => selectColor(4)} />
 				<Button label="Tout Atout" buttonFunction={() => selectColor(5)} />
 				<Button label="Contré" buttonFunction={changeCounter} />
