@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html{
+	height: 100vh;
+}
+
+body{
+	background-color: #111827;
+	line-height: inherit;
+	margin: 0 auto;
+}
+
+input:focus{
+	outline: none;
+}
+
+/*Masquer les flèches*/
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.isActive{
+	background-color: #14532d;
+}
