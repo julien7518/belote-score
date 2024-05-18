@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Image from "next/image";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./global.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,6 +26,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
 				<div className="flex-column justify-around">
 					{children}
+					<Analytics />
+					<SpeedInsights />
                 </div>
 
 				<footer className="flex w-screen justify-around text-sm text-gray-700 mb-10 mt-10 ">

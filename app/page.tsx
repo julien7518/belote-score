@@ -51,20 +51,22 @@ export default function App(){
 	const totalValues : number[] = [160, 160, 160, 160, 130, 260];
 	const multiplierValues : number[] = [2, 2, 3, 4, 10, 6];
 	const [color, setColor] = useState<Array<boolean>>(resetColor());
-	const [counter, setCounter] = useState<boolean>(false);
+	const [counter, setCounter] = useState<number>(1);
+	const [overCounter, setOverCounter] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
 	const [multiplier, setMultiplier] = useState<number>(0);
+	const onlyCountered: boolean = ((color[0] || color[1]) && counter == 2);
 
 	function resetColor(): boolean[]{
 		return (Array(5).fill(false));
 	}
 
-	function changeButtonStatus(i: number){
+	function changeButtonStatus(i: number): void{
 		const colorList: HTMLCollectionOf<Element> = document.getElementsByClassName("canBeActive");
 		colorList[i].classList.toggle("isActive");
 	}
 
-	function selectColor(elem: number){
+	function selectColor(elem: number): void{
 		let newColor: boolean[] = color;
 		newColor[elem] = !newColor[elem];
 		setTotal(newColor[elem] ? totalValues[elem] : 0);
@@ -79,28 +81,41 @@ export default function App(){
 		setColor(newColor);
 	}
 
-	function changeCounter(){
-		setCounter(!counter);
+	function changeCounter(): void{
+		setCounter(3 - counter);
 		changeButtonStatus(6);
-		}
+	}
 
-	function calculateScore(){
+	function changeOverCounter(): void{
+		if (counter == 2){
+			setOverCounter(3 - overCounter);
+			changeButtonStatus(7);
+		}
+	}
+
+	function addBelote(): void{
+		const inputUs: HTMLInputElement | null = document.getElementById("Nous") as HTMLInputElement;
+		const inputThey: HTMLInputElement | null = document.getElementById("Eux") as HTMLInputElement;
+		const beloteUs: HTMLInputElement | null = document.getElementById("beloteOfNous") as HTMLInputElement;
+		const beloteThey: HTMLInputElement | null = document.getElementById("beloteOfEux") as HTMLInputElement;
+
+		if (inputUs && inputThey && beloteUs && beloteThey){
+			inputUs.value = String(Number(inputUs.value) + Number(beloteUs.placeholder) * 20 * multiplier);
+			inputThey.value = String(Number(inputThey.value) + Number(beloteThey.placeholder) * 20 * multiplier);
+		}
+	}
+
+	function calculateScore(): void{
 		const inputUs: HTMLInputElement | null = document.getElementById("Nous") as HTMLInputElement;
 		const inputThey: HTMLInputElement | null = document.getElementById("Eux") as HTMLInputElement;
 		const score: string | null = inputUs ? inputUs.value : null;
 
-		if (score){
-			if (score != "0" && inputUs && inputThey && Number(score) < total && Number(score) >= total / 2) {
-				inputUs.value = counter ? String(Number(score) * multiplier * 2) : String(Number(score) * multiplier);
-				inputThey.value = counter ? String((total - Number(score)) * multiplier * 2) : String((total - Number(score)) * multiplier);
+		if (score && !onlyCountered){
+			if (inputUs && inputThey && Number(score) < total) {
+				inputUs.value = String(Number(score) * multiplier * counter * overCounter);
+				inputThey.value = String((total - Number(score)) * multiplier * counter * overCounter);
 
-				const beloteUs: HTMLInputElement | null = document.getElementById("beloteOfNous") as HTMLInputElement;
-				const beloteThey: HTMLInputElement | null = document.getElementById("beloteOfEux") as HTMLInputElement;
-
-				if (beloteUs && beloteThey){
-					inputUs.value = String(Number(inputUs.value) + Number(beloteUs.placeholder) * 20 * multiplier);
-					inputThey.value = String(Number(inputThey.value) + Number(beloteThey.placeholder) * 20 * multiplier);
-				}
+				addBelote();
 			}
 		}
 	}
@@ -110,23 +125,48 @@ export default function App(){
 		const [score, setScore] = useState<String>('0');
 		const condition: boolean = Number(score) < 0;
 
-		function Capot(){
+		function capot(): void{
 			const inputMe: HTMLInputElement | null = document.getElementById(name) as HTMLInputElement;
 			const otherName: string | null = (name == "Nous") ? "Eux" : "Nous"
 			const inputOther: HTMLInputElement | null = document.getElementById(otherName) as HTMLInputElement;
 
 			if (inputMe && inputOther) {
-				inputMe.value = (counter ? String((total + 90) * multiplier * 2) : String((total + 90) * multiplier));
+				inputMe.value = String((total + 90) * multiplier * counter * overCounter);
 				inputOther.value = "0";
+				addBelote();
 			}
+		}
+
+		function dedans(): void{
+			const inputMe: HTMLInputElement | null = document.getElementById(name) as HTMLInputElement;
+			const otherName: string | null = (name == "Nous") ? "Eux" : "Nous"
+			const inputOther: HTMLInputElement | null = document.getElementById(otherName) as HTMLInputElement;
+
+			if (inputMe && inputOther) {
+				inputOther.value = String(total * multiplier * counter * overCounter);
+				inputMe.value = "0";
+				addBelote();
+			}			
+		}
+
+		function actualizeOther(event: React.ChangeEvent<HTMLInputElement>): void{
+			const inputMe: HTMLInputElement | null = document.getElementById(name) as HTMLInputElement;
+			const otherName: string | null = (name == "Nous") ? "Eux" : "Nous"
+			const inputOther: HTMLInputElement | null = document.getElementById(otherName) as HTMLInputElement;
+
+			if (inputMe && inputOther) {
+				inputOther.value = String(total - Number(inputMe.value));
+			}
+
+			setScore(event.target.value)
 		}
 
 		return (
 			<>
 				<div className="flex-column m-2 justify-around">
-				<p className="text-white text-center p-2">{name}</p>
-				<div className=" flex justify-around">
-				<input id={name} onChange={(e => setScore(e.target.value))} type="number" placeholder="Score" className="block bg-gray-800 w-auto rounded-xl border-0 py-1.5 pl-4 pr-4 text-gray-400 ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-900" />
+				<p className="text-white text-center">{name}</p>
+				<div className=" flex justify-around p-2">
+				<input id={name} onChange={(e) => actualizeOther(e)} type="number" placeholder="Score" className="block bg-gray-800 w-auto rounded-xl border-0 py-1.5 pl-4 pr-4 text-gray-400 ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-900" />
 				</div>
 				<div className="flex justify-around">
 				{
@@ -134,11 +174,21 @@ export default function App(){
 				}
 				</div>
 				<div className="w-auto flex justify-around">
-					<div className="flex">
-					<Button label="Capot" buttonFunction={Capot}/>
-					<Button label="-" smallSize={true} buttonFunction={() => setBeloteCount((beloteCount > 0) ? beloteCount - 1 : beloteCount)}/>
-					<input id={"beloteOf" + name} className="block w-[0.58rem] bg-gray-900" type="number" readOnly={true} placeholder={String(beloteCount)}/>
-					<Button label="+" smallSize={true} buttonFunction={() => setBeloteCount((beloteCount < 4) ? beloteCount + 1 : beloteCount)}/>
+					<div className="flex-column">
+						<div className="flex justify-around">
+							<Button label="Capot" buttonFunction={capot}/>
+							<Button label="Dedans" buttonFunction={dedans}/>
+						</div>
+						<div className="flex justify-around">
+							<div className="flex items-center">
+								<div>
+									<p className="text-gray-400">Belote(s) :</p>
+								</div>
+							</div>
+							<Button label="-" smallSize={true} buttonFunction={() => setBeloteCount((beloteCount > 0 && !color[4]) ? beloteCount - 1 : beloteCount)}/>
+							<input id={"beloteOf" + name} className="block w-[0.58rem] bg-gray-900" type="number" readOnly={true} placeholder={String(beloteCount)}/>
+							<Button label="+" smallSize={true} buttonFunction={() => setBeloteCount((beloteCount < 4 && !color[4]) ? beloteCount + 1 : beloteCount)}/>
+						</div>
 					</div>
 				</div>
 				</div>
@@ -158,10 +208,11 @@ export default function App(){
 				<Button label="Sans Atout" buttonFunction={() => selectColor(4)} />
 				<Button label="Tout Atout" buttonFunction={() => selectColor(5)} />
 				<Button label="Contré" buttonFunction={changeCounter} />
+				<Button label="Surcontré" buttonFunction={changeOverCounter}/>
 			</div>
 		</div>
 		<div className="flex justify-around">
-		{((color[0] || color[1]) && !counter) && <ShowError errorMessage="Cette couleur ne se joue que contré" />}
+		{onlyCountered && <ShowError errorMessage="Cette couleur ne se joue que contré" />}
 		</div>
 		{/*Entrée des scores*/}
 		<div className="flex-column justify-around sm:flex">
