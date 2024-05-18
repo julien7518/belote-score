@@ -125,17 +125,21 @@ export default function App(){
 			<>
 				<div className="flex-column m-2 justify-around">
 				<p className="text-white text-center p-2">{name}</p>
-				<input id={name} onChange={(e => setScore(e.target.value))} type="number" placeholder="Score" className="block bg-gray-800 w-full rounded-xl border-0 py-1.5 pl-4 pr-4 text-gray-400 ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-900 sm:text-sm sm:leading-6" />
+				<div className=" flex justify-around">
+				<input id={name} onChange={(e => setScore(e.target.value))} type="number" placeholder="Score" className="block bg-gray-800 w-auto rounded-xl border-0 py-1.5 pl-4 pr-4 text-gray-400 ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-900" />
+				</div>
 				<div className="flex justify-around">
 				{
 					condition && <ShowError errorMessage="Veuillez entrer un nombre valide" />
 				}
 				</div>
-				<div className="flex justify-around">
+				<div className="w-auto flex justify-around">
+					<div className="flex">
 					<Button label="Capot" buttonFunction={Capot}/>
 					<Button label="-" smallSize={true} buttonFunction={() => setBeloteCount((beloteCount > 0) ? beloteCount - 1 : beloteCount)}/>
 					<input id={"beloteOf" + name} className="block w-[0.58rem] bg-gray-900" type="number" readOnly={true} placeholder={String(beloteCount)}/>
 					<Button label="+" smallSize={true} buttonFunction={() => setBeloteCount((beloteCount < 4) ? beloteCount + 1 : beloteCount)}/>
+					</div>
 				</div>
 				</div>
 			</>
@@ -146,7 +150,7 @@ export default function App(){
 		<>
 		{/*Couleur*/}
 		<div className="flex justify-around">
-			<div className="inline-grid grid-cols-4">
+			<div className="inline-grid grid-cols-2 sm:grid-cols-4">
 				<Button iconUrl="/trefle.svg" label="Trèfle" buttonFunction={() => selectColor(0)} />
 				<Button iconUrl="/carreau.svg" label="Carreau" buttonFunction={() => selectColor(1)} />
 				<Button iconUrl="/coeur.svg" label="Coeur" buttonFunction={() => selectColor(2)} />
@@ -160,7 +164,7 @@ export default function App(){
 		{((color[0] || color[1]) && !counter) && <ShowError errorMessage="Cette couleur ne se joue que contré" />}
 		</div>
 		{/*Entrée des scores*/}
-		<div className="flex justify-around">
+		<div className="flex-column justify-around sm:flex">
 			<div className="transparent"></div>
 			<div className="transparent"></div>
 			<ScoreInput name="Nous" />

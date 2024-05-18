@@ -26,7 +26,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 					{children}
                 </div>
 
-				<footer className="fixed w-screen text-center text-sm text-gray-700 mb-0 pt-20">
+				<footer className="flex w-screen justify-around text-sm text-gray-700 mb-10 mt-10 ">
 					<p>Made by <a className="underline" target="_blank" href="https://github.com/julien7518">me</a> Ⓒ</p>
 				</footer>
 
