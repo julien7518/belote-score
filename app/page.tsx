@@ -18,7 +18,7 @@ function ShowError({errorMessage, active=true} : {errorMessage: string, active?:
 	) : null
 }
 
-interface SeclectButtonProps {
+interface SeclectButtonProps{
 	iconUrl?: string;
 	label: string;
 	buttonFunction?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -48,18 +48,14 @@ function Button({iconUrl, label, buttonFunction, smallSize=false} : SeclectButto
 
 export default function App(){
 	
-	const totalValues : number[] = [160, 160, 160, 160, 130, 260];
+	const totalPointsValues : number[] = [160, 160, 160, 160, 130, 260];
 	const multiplierValues : number[] = [2, 2, 3, 4, 10, 6];
-	const [color, setColor] = useState<Array<boolean>>(resetColor());
+	const [color, setColor] = useState<Array<boolean>>(Array(5).fill(false));
 	const [counter, setCounter] = useState<number>(1);
 	const [overCounter, setOverCounter] = useState<number>(1);
-	const [total, setTotal] = useState<number>(0);
+	const [totalPoints, setTotal] = useState<number>(0);
 	const [multiplier, setMultiplier] = useState<number>(0);
-	const onlyCountered: boolean = ((color[0] || color[1]) && counter == 2);
-
-	function resetColor(): boolean[]{
-		return (Array(5).fill(false));
-	}
+	const onlyCountered: boolean = ((color[0] || color[1]) && counter === 1);
 
 	function changeButtonStatus(i: number): void{
 		const colorList: HTMLCollectionOf<Element> = document.getElementsByClassName("canBeActive");
@@ -69,7 +65,7 @@ export default function App(){
 	function selectColor(elem: number): void{
 		let newColor: boolean[] = color;
 		newColor[elem] = !newColor[elem];
-		setTotal(newColor[elem] ? totalValues[elem] : 0);
+		setTotal(newColor[elem] ? totalPointsValues[elem] : 0);
 		setMultiplier(newColor[elem] ? multiplierValues[elem] : 0);
 		changeButtonStatus(elem);
 		for(let i = 0; i < 6; i++){
@@ -87,7 +83,7 @@ export default function App(){
 	}
 
 	function changeOverCounter(): void{
-		if (counter == 2){
+		if (counter === 2 || overCounter === 2){
 			setOverCounter(3 - overCounter);
 			changeButtonStatus(7);
 		}
@@ -100,8 +96,10 @@ export default function App(){
 		const beloteThey: HTMLInputElement | null = document.getElementById("beloteOfEux") as HTMLInputElement;
 
 		if (inputUs && inputThey && beloteUs && beloteThey){
-			inputUs.value = String(Number(inputUs.value) + Number(beloteUs.placeholder) * 20 * multiplier);
-			inputThey.value = String(Number(inputThey.value) + Number(beloteThey.placeholder) * 20 * multiplier);
+			const valueUs: number = Number(inputUs.value) + Number(beloteUs.placeholder) * 20 * multiplier; 
+			const valueThey: number = Number(inputThey.value) + Number(beloteThey.placeholder) * 20 * multiplier;
+			inputUs.value = String(valueUs);
+			inputThey.value = String(valueThey);
 		}
 	}
 
@@ -111,10 +109,9 @@ export default function App(){
 		const score: string | null = inputUs ? inputUs.value : null;
 
 		if (score && !onlyCountered){
-			if (inputUs && inputThey && Number(score) < total) {
+			if (inputUs && inputThey && Number(score) < totalPoints) {
 				inputUs.value = String(Number(score) * multiplier * counter * overCounter);
-				inputThey.value = String((total - Number(score)) * multiplier * counter * overCounter);
-
+				inputThey.value = String((totalPoints - Number(score)) * multiplier * counter * overCounter);
 				addBelote();
 			}
 		}
@@ -124,14 +121,14 @@ export default function App(){
 		const [beloteCount, setBeloteCount] = useState<number>(0);
 		const [score, setScore] = useState<String>('0');
 		const condition: boolean = Number(score) < 0;
+		const otherName: string | null = (name === "Nous") ? "Eux" : "Nous";
 
 		function capot(): void{
 			const inputMe: HTMLInputElement | null = document.getElementById(name) as HTMLInputElement;
-			const otherName: string | null = (name == "Nous") ? "Eux" : "Nous"
-			const inputOther: HTMLInputElement | null = document.getElementById(otherName) as HTMLInputElement;
+			const inputOther: HTMLInputElement | null = otherName ? document.getElementById(otherName) as HTMLInputElement : null;
 
-			if (inputMe && inputOther) {
-				inputMe.value = String((total + 90) * multiplier * counter * overCounter);
+			if (inputMe && inputOther && !onlyCountered) {
+				inputMe.value = String((totalPoints + 90) * multiplier * counter * overCounter);
 				inputOther.value = "0";
 				addBelote();
 			}
@@ -139,11 +136,10 @@ export default function App(){
 
 		function dedans(): void{
 			const inputMe: HTMLInputElement | null = document.getElementById(name) as HTMLInputElement;
-			const otherName: string | null = (name == "Nous") ? "Eux" : "Nous"
-			const inputOther: HTMLInputElement | null = document.getElementById(otherName) as HTMLInputElement;
+			const inputOther: HTMLInputElement | null = otherName ? document.getElementById(otherName) as HTMLInputElement : null;
 
-			if (inputMe && inputOther) {
-				inputOther.value = String(total * multiplier * counter * overCounter);
+			if (inputMe && inputOther && !onlyCountered) {
+				inputOther.value = String(totalPoints * multiplier * counter * overCounter);
 				inputMe.value = "0";
 				addBelote();
 			}			
@@ -151,11 +147,10 @@ export default function App(){
 
 		function actualizeOther(event: React.ChangeEvent<HTMLInputElement>): void{
 			const inputMe: HTMLInputElement | null = document.getElementById(name) as HTMLInputElement;
-			const otherName: string | null = (name == "Nous") ? "Eux" : "Nous"
-			const inputOther: HTMLInputElement | null = document.getElementById(otherName) as HTMLInputElement;
+			const inputOther: HTMLInputElement | null = otherName ? document.getElementById(otherName) as HTMLInputElement : null;
 
 			if (inputMe && inputOther) {
-				inputOther.value = String(total - Number(inputMe.value));
+				inputOther.value = String(totalPoints - Number(inputMe.value));
 			}
 
 			setScore(event.target.value)
@@ -212,7 +207,9 @@ export default function App(){
 			</div>
 		</div>
 		<div className="flex justify-around">
-		{onlyCountered && <ShowError errorMessage="Cette couleur ne se joue que contré" />}
+		{
+			onlyCountered && <ShowError errorMessage="Cette couleur ne se joue que contré" />
+		}
 		</div>
 		{/*Entrée des scores*/}
 		<div className="flex-column justify-around sm:flex">
