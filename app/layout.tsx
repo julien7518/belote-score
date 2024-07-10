@@ -30,8 +30,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 					<SpeedInsights />
                 </div>
 
-				<footer className="flex w-screen justify-around text-sm text-gray-700 mb-10 mt-10 ">
-					<p>Made by <a className="underline" target="_blank" href="https://github.com/julien7518">me</a> Ⓒ</p>
+				<footer className="flex w-screen justify-around text-sm text-gray-700 my-10 ">
+					<p>Made by <a className="underline" target="_blank" href="https://github.com/julien7518">me</a></p>
 				</footer>
 
 			</body>

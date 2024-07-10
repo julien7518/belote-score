@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function ShowError({errorMessage, active=true} : {errorMessage: string, active?: boolean}){
 	return active ? (
@@ -18,15 +18,16 @@ function ShowError({errorMessage, active=true} : {errorMessage: string, active?:
 	) : null
 }
 
-interface SeclectButtonProps{
+interface SelectButtonProps{
 	iconUrl?: string;
 	label: string;
 	buttonFunction?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 	smallSize? : boolean;
+	extraSmallSize? : boolean;
 }
 
-function Button({iconUrl, label, buttonFunction, smallSize=false} : SeclectButtonProps){
-	const size: string = smallSize ? "3rem" : "8rem";
+function Button({iconUrl, label, buttonFunction, smallSize=false, extraSmallSize=false} : SelectButtonProps){
+	const size: string = smallSize ? "3rem" : extraSmallSize ? "1rem" : "8rem";
 	const image = iconUrl ? (
 		<Image src = {iconUrl}
 			alt = {label}
@@ -47,15 +48,20 @@ function Button({iconUrl, label, buttonFunction, smallSize=false} : SeclectButto
 }
 
 export default function App(){
-	
-	const totalPointsValues : number[] = [160, 160, 160, 160, 130, 260];
-	const multiplierValues : number[] = [2, 2, 3, 4, 10, 6];
+
 	const [color, setColor] = useState<Array<boolean>>(Array(5).fill(false));
 	const [counter, setCounter] = useState<number>(1);
 	const [overCounter, setOverCounter] = useState<number>(1);
 	const [totalPoints, setTotal] = useState<number>(0);
-	const [multiplier, setMultiplier] = useState<number>(0);
+	const [multiplier, setMultiplier] = useState<number>(0);	
+	const [points, setPoints] = useState<Array<Array<number>>>([]);
 	const onlyCountered: boolean = ((color[0] || color[1]) && counter === 1);
+	const totalPointsValues : number[] = [160, 160, 160, 160, 130, 260];
+	const multiplierValues : number[] = [2, 2, 3, 4, 10, 6];
+	
+	function actualizeScore(scoreNous: number, scoreEux: number){
+		setPoints(prevPoints => [...prevPoints, [scoreNous, scoreEux]]);
+	}
 
 	function changeButtonStatus(i: number): void{
 		const colorList: HTMLCollectionOf<Element> = document.getElementsByClassName("canBeActive");
@@ -100,6 +106,7 @@ export default function App(){
 			const valueThey: number = Number(inputThey.value) + Number(beloteThey.placeholder) * 20 * multiplier;
 			inputUs.value = String(valueUs);
 			inputThey.value = String(valueThey);
+			actualizeScore(valueUs, valueThey);
 		}
 	}
 
@@ -223,6 +230,7 @@ export default function App(){
 		<div className="flex justify-around">
 			<Button label="Calculer" buttonFunction={calculateScore} /> 
 		</div>
+		{/*Affichage des scores*/}
 		</>
 	);
 }
