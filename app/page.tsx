@@ -53,15 +53,10 @@ export default function App(){
 	const [counter, setCounter] = useState<number>(1);
 	const [overCounter, setOverCounter] = useState<number>(1);
 	const [totalPoints, setTotal] = useState<number>(0);
-	const [multiplier, setMultiplier] = useState<number>(0);	
-	const [points, setPoints] = useState<Array<Array<number>>>([]);
+	const [multiplier, setMultiplier] = useState<number>(0);
 	const onlyCountered: boolean = ((color[0] || color[1]) && counter === 1);
 	const totalPointsValues : number[] = [160, 160, 160, 160, 130, 260];
 	const multiplierValues : number[] = [2, 2, 3, 4, 10, 6];
-	
-	function actualizeScore(scoreNous: number, scoreEux: number){
-		setPoints(prevPoints => [...prevPoints, [scoreNous, scoreEux]]);
-	}
 
 	function changeButtonStatus(i: number): void{
 		const colorList: HTMLCollectionOf<Element> = document.getElementsByClassName("canBeActive");
@@ -106,7 +101,6 @@ export default function App(){
 			const valueThey: number = Number(inputThey.value) + Number(beloteThey.placeholder) * 20 * multiplier;
 			inputUs.value = String(valueUs);
 			inputThey.value = String(valueThey);
-			actualizeScore(valueUs, valueThey);
 		}
 	}
 
