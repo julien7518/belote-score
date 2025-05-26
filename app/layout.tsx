@@ -19,7 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
 				<header className="flex justify-around">
 					<div className="flex">
-						<Image src="/logo.svg" alt="Belote Score" height="80" width="80"/>
+						<Image src="/logo.svg" alt="Belote Score" height="80" width="80" />
 						<h1 className="text-slate-100 text-3xl font-bold m-10 ">Belote Score</h1>
 					</div>
 				</header>
@@ -28,7 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 					{children}
 					<Analytics />
 					<SpeedInsights />
-                </div>
+				</div>
 
 				<footer className="flex w-screen justify-around text-sm text-gray-700 my-10 ">
 					<p>Made by <a className="underline" target="_blank" href="https://github.com/julien7518">me</a></p>
